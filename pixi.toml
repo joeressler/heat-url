@@ -8,6 +8,8 @@ version = "0.1.0"
 
 [tasks]
 mojo-version = "mojo --version"
+test = "bash scripts/run-tests.sh"
+fmt = "mojo format src test"
 
 [dependencies]
 mojo = ">=1.0.0,<2"

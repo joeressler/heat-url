@@ -18,9 +18,7 @@ These documents are the **normative product specification** for `heat-url`. Futu
 | 09 | [Public API](09-api.md) | Required modules, types, and operations |
 | 10 | [Conformance](10-conformance.md) | Test vectors, golden files, acceptance |
 
-## Implementation freeze (this repository revision)
-
-The current revision **must not** add Mojo library source. Specifications and `AGENTS.md` are the deliverable. Code lands in a later change set that cites these documents.
+Implementation order for agents is **not** this reading order. Follow [`phases/README.md`](../phases/README.md).
 
 ## Keywords
 

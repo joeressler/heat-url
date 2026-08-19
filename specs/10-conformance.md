@@ -1,12 +1,11 @@
 # 10 — Conformance
 
-A future implementation is **not** complete until the following pass. This revision does not include test *code*; it defines the suite.
+A future implementation is **not** complete until the following pass. Phases 01–08 add unit tests; **phase 09** vendors golden files.
 
 ## Tooling
 
-- Run tests with `mojo run -I src test/<file>.mojo`.
+- Run tests with `pixi run test` (`scripts/run-tests.sh` runs each `test/test_*.mojo`).
 - Each test file: `test_*` functions + `main()` calling `TestSuite.discover_tests[__functions_in_module()]().run()`.
-- `pixi.toml` **SHOULD** grow a `test` task that runs all test files once they exist.
 - `mojo test` **MUST NOT** be used (removed from Mojo).
 
 ## Golden sources (import as data, do not retype by hand)

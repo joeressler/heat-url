@@ -52,26 +52,23 @@ There is **no** implicit “best effort” profile that tries WHATWG after RFC f
 - URI templates ([RFC 6570](https://www.rfc-editor.org/rfc/rfc6570)), media type parsing, or mailto/data-URL specialized codecs beyond generic syntax.
 - Public Suffix List registration as a *required* parse step. Optional PSL helpers **MAY** land later; they **MUST NOT** gate basic parse.
 
-## Intended package layout (when code is added)
+## Package layout
 
 Follow Modular’s library layout so `mojo precompile` / pixi-build-mojo can discover the package:
 
 ```text
 src/heat_url/__init__.mojo
-src/heat_url/percent.mojo
-src/heat_url/query.mojo
-src/heat_url/host.mojo
-src/heat_url/idna.mojo
-src/heat_url/rfc3986.mojo
-src/heat_url/whatwg.mojo
-test/test_percent.mojo
-test/test_query.mojo
-test/test_host.mojo
-test/test_rfc3986.mojo
-test/test_whatwg.mojo
+src/heat_url/percent.mojo      # phase 01
+src/heat_url/query.mojo        # phase 02
+src/heat_url/punycode.mojo     # phase 03
+src/heat_url/idna.mojo         # phase 04
+src/heat_url/host.mojo         # phase 05
+src/heat_url/rfc3986.mojo      # phase 06
+src/heat_url/whatwg.mojo       # phase 07
+test/test_*.mojo
 ```
 
-Do not add these files until an implementation change set. Tests use `std.testing.TestSuite` (`mojo test` was removed).
+Bootstrap (phase 00) already added `profile`, `limits`, `options`, and `error`. Tests use `std.testing.TestSuite` (`mojo test` was removed). Agents implement remaining files per [`phases/`](../phases/README.md).
 
 ## Versioning
 
