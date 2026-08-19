@@ -39,16 +39,5 @@ from heat_url.profile import ParseProfile
 from heat_url.punycode import punycode_decode, punycode_encode
 from heat_url.query import QueryList
 from heat_url.rfc3986 import PathKind, Uri, parse_uri
-from heat_url.percent import (
-    EncodeSet,
-    decode_lenient,
-    decode_strict,
-    decode_utf8_lenient,
-    decode_utf8_strict,
-    encode,
-)
-from heat_url.profile import ParseProfile
-from heat_url.punycode import punycode_decode, punycode_encode
-from heat_url.query import QueryList
 
 comptime VERSION: StaticString = "0.1.0"

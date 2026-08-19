@@ -566,8 +566,6 @@ def _classify_path(
     has_scheme: Bool, has_authority: Bool, path: String
 ) -> PathKind:
     if has_authority:
-        if path.byte_length() == 0:
-            return PathKind.empty
         return PathKind.abempty
     if path.byte_length() == 0:
         return PathKind.empty

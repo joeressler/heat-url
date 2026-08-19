@@ -158,6 +158,7 @@ def test_has_authority_slash_count() raises:
     assert_true(auth.has_authority)
     assert_equal(auth.host().value().serialize(), "bar")
     assert_equal(auth.path, "")
+    assert_equal(auth.path_kind, PathKind.abempty)
     assert_equal(auth.serialize(), "foo://bar")
 
 
@@ -234,6 +235,17 @@ def test_query_list_from_uri() raises:
     var q = u.query_list()
     assert_equal(len(q), 2)
     assert_equal(q.get("a").value(), "b")
+
+
+def test_rfc_abnf_failures() raises:
+    with assert_raises(contains="invalid_authority"):
+        _ = parse_uri("http://[::1")
+    with assert_raises(contains="invalid_ipv6"):
+        _ = parse_uri("http://[gggg::1]/")
+    with assert_raises(contains="invalid_host"):
+        _ = parse_uri("http://exam ple.com/")
+    with assert_raises(contains="invalid_port"):
+        _ = parse_uri("http://h:80a/")
 
 
 def test_parse_host_rfc3986_iri_reg_name() raises:
