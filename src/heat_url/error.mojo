@@ -67,6 +67,39 @@ struct ParseError(Copyable, Movable, Writable):
             Optional[String](),
         )
 
+    @staticmethod
+    def authority_too_long(
+        profile: ParseProfile, length: Int, max_length: Int
+    ) -> Self:
+        var message = (
+            "host length "
+            + String(length)
+            + " exceeds max_authority_length "
+            + String(max_length)
+        )
+        return ParseError(
+            profile,
+            "authority_too_long",
+            message^,
+            Optional[Int](),
+            Optional[String](),
+        )
+
+    @staticmethod
+    def host_failure(
+        profile: ParseProfile,
+        kind: String,
+        message: String,
+        whatwg_name: Optional[String],
+    ) -> Self:
+        return ParseError(
+            profile,
+            kind.copy(),
+            message.copy(),
+            Optional[Int](),
+            whatwg_name,
+        )
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("ParseError(", self.profile, ", ", self.kind, ")")
         if self.message.byte_length() > 0:

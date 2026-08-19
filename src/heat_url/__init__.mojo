@@ -16,6 +16,14 @@ from heat_url.limits import (
     DNS_MAX_DOMAIN_OCTETS,
     DNS_MAX_LABEL_OCTETS,
 )
+from heat_url.host import (
+    Ipv6Pieces,
+    RfcHost,
+    WhatwgHost,
+    parse_host_rfc3986,
+    parse_host_whatwg,
+    serialize_host,
+)
 from heat_url.idna import to_ascii, to_unicode
 from heat_url.idna_data import UNICODE_VERSION
 from heat_url.options import ParseOptions
