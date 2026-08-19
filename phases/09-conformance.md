@@ -49,7 +49,7 @@ Checklist from spec 10:
 2. WPT skips are listed with reasons
 3. IDNATestV2 transitional ignored; processing stays non-transitional
 4. No Python import in `src/heat_url`
-5. `pixi run mojo-version` and `pixi run test` succeed
+5. `pixi run mojo --version` and `pixi run test` succeed
 
 ## Out of scope
 

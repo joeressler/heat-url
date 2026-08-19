@@ -29,7 +29,7 @@ Requires [Pixi](https://pixi.sh/) and a C linker (`gcc` on Linux).
 
 ```bash
 pixi install
-pixi run mojo-version
+pixi run mojo --version
 pixi run test
 pixi run fmt
 ```
