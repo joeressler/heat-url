@@ -70,19 +70,24 @@ def decode_utf8_strict(input: String) raises -> String
 
 ```text
 struct QueryList:
-    def parse(input: String, *, form: Bool = True) raises -> Self
+    def parse(
+        input: String,
+        *,
+        form: Bool = True,
+        max_tuples: Int = DEFAULT_MAX_QUERY_TUPLES,
+    ) raises -> Self
     def serialize(self) -> String
     def get(self, name: String) -> Optional[String]
     def get_all(self, name: String) -> List[String]
-    def has(self, name: String) -> Bool
+    def has(self, name: String, value: Optional[String] = None) -> Bool
     def append(mut self, name: String, value: String)
     def set(mut self, name: String, value: String)
-    def delete(mut self, name: String)
+    def delete(mut self, name: String, value: Optional[String] = None)
     def sort(mut self)
     def __len__(self) -> Int
 ```
 
-`form=True` means WHATWG form-urlencoded (`+` as space, split on `&`). `form=False` means split on `&` / first `=` without plus-decoding.
+`form=True` means WHATWG form-urlencoded (`+` as space, split on `&`). `form=False` means split on `&` / first `=` without plus-decoding. `has` / `delete` take an optional `value` matching WHATWG `URLSearchParams` (specs/05). `max_tuples` defaults to 4096; exceeding it fails with `too_many_query_tuples`.
 
 ## Host and IDNA (`heat_url.host`, `heat_url.idna`)
 

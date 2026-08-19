@@ -49,6 +49,24 @@ struct ParseError(Copyable, Movable, Writable):
             Optional[String](),
         )
 
+    @staticmethod
+    def too_many_query_tuples(
+        profile: ParseProfile, count: Int, max_tuples: Int
+    ) -> Self:
+        var message = (
+            "query tuple count "
+            + String(count)
+            + " exceeds max_tuples "
+            + String(max_tuples)
+        )
+        return ParseError(
+            profile,
+            "too_many_query_tuples",
+            message^,
+            Optional[Int](),
+            Optional[String](),
+        )
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("ParseError(", self.profile, ", ", self.kind, ")")
         if self.message.byte_length() > 0:
@@ -79,6 +97,24 @@ struct ValidationError(Copyable, Movable, Writable):
 struct IdnaError(Copyable, Movable, Writable):
     var code: String
     var message: String
+
+    @staticmethod
+    def punycode_bad_input(message: String) -> Self:
+        return IdnaError("punycode_bad_input", message.copy())
+
+    @staticmethod
+    def punycode_overflow() -> Self:
+        return IdnaError("punycode_overflow", "punycode arithmetic overflow")
+
+    @staticmethod
+    def punycode_too_long(length: Int, max_length: Int) -> Self:
+        var message = (
+            "punycode label length "
+            + String(length)
+            + " exceeds "
+            + String(max_length)
+        )
+        return IdnaError("punycode_too_long", message^)
 
     def write_to(self, mut writer: Some[Writer]):
         writer.write("IdnaError(", self.code, ")")
