@@ -25,5 +25,6 @@ from heat_url.percent import (
     encode,
 )
 from heat_url.profile import ParseProfile
+from heat_url.query import QueryList
 
 comptime VERSION: StaticString = "0.1.0"
