@@ -6,3 +6,6 @@
 *.mojopkg
 *.mojoc
 /output/
+
+# Unicode UCD cache used by tools/generate_idna_tables.py
+tools/.unicode-cache/

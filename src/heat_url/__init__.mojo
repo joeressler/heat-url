@@ -13,8 +13,11 @@ from heat_url.limits import (
     DEFAULT_MAX_PATH_SEGMENTS,
     DEFAULT_MAX_PUNYCODE_LABEL_CODEPOINTS,
     DEFAULT_MAX_QUERY_TUPLES,
+    DNS_MAX_DOMAIN_OCTETS,
     DNS_MAX_LABEL_OCTETS,
 )
+from heat_url.idna import to_ascii, to_unicode
+from heat_url.idna_data import UNICODE_VERSION
 from heat_url.options import ParseOptions
 from heat_url.percent import (
     EncodeSet,

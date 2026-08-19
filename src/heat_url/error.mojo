@@ -116,6 +116,61 @@ struct IdnaError(Copyable, Movable, Writable):
         )
         return IdnaError("punycode_too_long", message^)
 
+    @staticmethod
+    def input_too_long(length: Int, max_length: Int) -> Self:
+        var message = (
+            "input length " + String(length) + " exceeds " + String(max_length)
+        )
+        return IdnaError("input_too_long", message^)
+
+    @staticmethod
+    def too_many_labels(count: Int, max_labels: Int) -> Self:
+        var message = (
+            "IDNA label count "
+            + String(count)
+            + " exceeds "
+            + String(max_labels)
+        )
+        return IdnaError("too_many_labels", message^)
+
+    @staticmethod
+    def disallowed() -> Self:
+        return IdnaError("disallowed", "disallowed IDNA code point")
+
+    @staticmethod
+    def not_nfc() -> Self:
+        return IdnaError("not_nfc", "label is not Unicode NFC")
+
+    @staticmethod
+    def check_hyphens() -> Self:
+        return IdnaError("check_hyphens", "label has forbidden hyphens")
+
+    @staticmethod
+    def leading_combining_mark() -> Self:
+        return IdnaError(
+            "leading_combining_mark", "label begins with a combining mark"
+        )
+
+    @staticmethod
+    def std3() -> Self:
+        return IdnaError("std3", "label violates STD3 ASCII rules")
+
+    @staticmethod
+    def check_bidi() -> Self:
+        return IdnaError("check_bidi", "label violates IDNA Bidi Rule")
+
+    @staticmethod
+    def check_joiners() -> Self:
+        return IdnaError("check_joiners", "label violates CONTEXTJ")
+
+    @staticmethod
+    def invalid_ace() -> Self:
+        return IdnaError("invalid_ace", "invalid xn-- / Punycode label")
+
+    @staticmethod
+    def dns_length() -> Self:
+        return IdnaError("dns_length", "domain or label DNS length invalid")
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("IdnaError(", self.code, ")")
         if self.message.byte_length() > 0:
