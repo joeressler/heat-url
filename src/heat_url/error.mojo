@@ -98,6 +98,24 @@ struct IdnaError(Copyable, Movable, Writable):
     var code: String
     var message: String
 
+    @staticmethod
+    def punycode_bad_input(message: String) -> Self:
+        return IdnaError("punycode_bad_input", message.copy())
+
+    @staticmethod
+    def punycode_overflow() -> Self:
+        return IdnaError("punycode_overflow", "punycode arithmetic overflow")
+
+    @staticmethod
+    def punycode_too_long(length: Int, max_length: Int) -> Self:
+        var message = (
+            "punycode label length "
+            + String(length)
+            + " exceeds "
+            + String(max_length)
+        )
+        return IdnaError("punycode_too_long", message^)
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("IdnaError(", self.code, ")")
         if self.message.byte_length() > 0:
