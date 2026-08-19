@@ -29,6 +29,26 @@ struct ParseError(Copyable, Movable, Writable):
             Optional[String](),
         )
 
+    @staticmethod
+    def invalid_percent_encoding(index: Int) -> Self:
+        return ParseError(
+            ParseProfile.rfc3986,
+            "invalid_percent_encoding",
+            "percent-encoding is not two hex digits",
+            Optional(index),
+            Optional[String](),
+        )
+
+    @staticmethod
+    def invalid_utf8(profile: ParseProfile) -> Self:
+        return ParseError(
+            profile,
+            "invalid_utf8",
+            "percent-decoded bytes are not valid UTF-8",
+            Optional[Int](),
+            Optional[String](),
+        )
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("ParseError(", self.profile, ", ", self.kind, ")")
         if self.message.byte_length() > 0:

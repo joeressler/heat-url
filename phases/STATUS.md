@@ -4,8 +4,8 @@ Update the **Status** column when a phase is finished (`todo` → `done`). Do no
 
 | ID | Phase | Status | Notes |
 | --- | --- | --- | --- |
-| 00 | [Bootstrap](00-bootstrap.md) | done | Package, ParseProfile, ParseError, ParseOptions, `pixi run test` |
-| 01 | [Percent-encoding](01-percent-encoding.md) | todo | |
+| 00 | [Bootstrap](00-bootstrap.md) | done | Package, ParseProfile, ParseError, ParseOptions (including `base`), `pixi run test` |
+| 01 | [Percent-encoding](01-percent-encoding.md) | done | `heat_url.percent` encode/decode sets |
 | 02 | [Query parameters](02-query-parameters.md) | todo | |
 | 03 | [Punycode](03-punycode.md) | todo | |
 | 04 | [IDNA / UTS #46](04-idna.md) | todo | |

@@ -35,7 +35,7 @@ Implement these sets exactly. Each is a set of code points that **are** encoded.
 | `special_query` | query + `'` |
 | `path` | query + `?` `^` `` ` `` `{` `}` |
 | `userinfo` | path + `/` `:` `;` `=` `@` `[` `\` `]` `\|` |
-| `component` | userinfo + `$` `&` `+` `,` (HTML `encodeURIComponent` equivalent with UTF-8) |
+| `component` | userinfo + `$`–`&` `+` `,` (includes `%`; HTML `encodeURIComponent` equivalent with UTF-8) |
 | `application_x_www_form_urlencoded` | component + `!` `'` `(` `)` `~` — i.e. encode everything except `ALPHA / DIGIT / * / - / . / _` |
 
 RFC 3986 **unreserved** is `ALPHA / DIGIT / "-" / "." / "_" / "~"`. Encoding “all except unreserved” is **not** the same as the form-urlencoded set (`~` is unreserved in RFC 3986 but encoded in form-urlencoded).

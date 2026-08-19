@@ -18,7 +18,7 @@ Make the repo implementable: a compilable `heat_url` package, shared error/profi
 src/heat_url/__init__.mojo
 src/heat_url/profile.mojo      # ParseProfile.rfc3986 | .whatwg
 src/heat_url/limits.mojo       # comptime caps
-src/heat_url/options.mojo      # ParseOptions.rfc3986() / .whatwg()
+src/heat_url/options.mojo      # ParseOptions.rfc3986() / .whatwg(); includes `base`
 src/heat_url/error.mojo        # ParseError, ValidationError, IdnaError,
                                # check_input_length, redact_userinfo
 test/test_package.mojo

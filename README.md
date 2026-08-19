@@ -12,7 +12,8 @@ Implement against [`specs/`](specs/), following the agent phases in [`phases/`](
 | Specifications | Ready (`specs/`) |
 | Implementation phases | Ready (`phases/`) |
 | Bootstrap package (`ParseProfile`, errors, options) | Done (phase 00) |
-| Percent / query / IDNA / parsers | Not started (phases 01–09) |
+| Percent-encoding (`heat_url.percent`) | Done (phase 01) |
+| Query / IDNA / parsers | Not started (phases 02–09) |
 
 ## Specifications
 
