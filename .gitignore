@@ -1,0 +1,8 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# Mojo build artifacts (when library code is added)
+*.mojopkg
+*.mojoc
+/output/
