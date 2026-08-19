@@ -100,6 +100,26 @@ struct ParseError(Copyable, Movable, Writable):
             whatwg_name,
         )
 
+    @staticmethod
+    def rfc_failure(kind: String, message: String) -> Self:
+        return ParseError(
+            ParseProfile.rfc3986,
+            kind.copy(),
+            message.copy(),
+            Optional[Int](),
+            Optional[String](),
+        )
+
+    @staticmethod
+    def rfc_failure_at(kind: String, message: String, index: Int) -> Self:
+        return ParseError(
+            ParseProfile.rfc3986,
+            kind.copy(),
+            message.copy(),
+            Optional(index),
+            Optional[String](),
+        )
+
     def write_to(self, mut writer: Some[Writer]):
         writer.write("ParseError(", self.profile, ", ", self.kind, ")")
         if self.message.byte_length() > 0:

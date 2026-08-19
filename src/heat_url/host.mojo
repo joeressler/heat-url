@@ -300,9 +300,10 @@ def parse_host_whatwg(
     return WhatwgHost.domain(ascii_domain^)
 
 
-# RFC 3986 Appendix A host: IP-literal / IPv4address / reg-name.
+# RFC 3986 Appendix A host: IP-literal / IPv4address / reg-name
+# (RFC 3987 ireg-name when iri=True).
 def parse_host_rfc3986(
-    input: String, *, allow_zone_id: Bool = True
+    input: String, *, allow_zone_id: Bool = True, iri: Bool = False
 ) raises ParseError -> RfcHost:
     _check_host_length(input, ParseProfile.rfc3986)
     if input.byte_length() == 0:
@@ -312,7 +313,10 @@ def parse_host_rfc3986(
     var ipv4 = _try_rfc_ipv4(input)
     if ipv4.ok:
         return RfcHost.ipv4(UInt32(ipv4.value))
-    if _is_reg_name(input):
+    if iri:
+        if _is_ireg_name(input):
+            return RfcHost.reg_name(input.copy())
+    elif _is_reg_name(input):
         return RfcHost.reg_name(input.copy())
     raise _rfc_fail(
         "invalid_host", "host is not IP-literal, IPv4address, or reg-name"
@@ -865,6 +869,68 @@ def _is_reg_name(input: String) -> Bool:
         else:
             return False
     return True
+
+
+# RFC 3987 ireg-name = *( iunreserved / pct-encoded / sub-delims ).
+def _is_ireg_name(input: String) -> Bool:
+    var cps = List[Int]()
+    for cp in input.codepoints():
+        cps.append(Int(cp))
+    var n = len(cps)
+    var i = 0
+    while i < n:
+        var cp = cps[i]
+        if _is_unreserved(cp) or _is_sub_delim(cp):
+            i += 1
+        elif (
+            cp == 0x25
+            and i + 2 < n
+            and _is_ascii_hex(cps[i + 1])
+            and _is_ascii_hex(cps[i + 2])
+        ):
+            i += 3
+        elif _is_ucschar(cp):
+            i += 1
+        else:
+            return False
+    return True
+
+
+# RFC 3987 ucschar (IRI non-ASCII allowed in most components).
+def _is_ucschar(cp: Int) -> Bool:
+    if cp >= 0xA0 and cp <= 0xD7FF:
+        return True
+    if cp >= 0xF900 and cp <= 0xFDCF:
+        return True
+    if cp >= 0xFDF0 and cp <= 0xFFEF:
+        return True
+    if cp >= 0x10000 and cp <= 0x1FFFD:
+        return True
+    if cp >= 0x20000 and cp <= 0x2FFFD:
+        return True
+    if cp >= 0x30000 and cp <= 0x3FFFD:
+        return True
+    if cp >= 0x40000 and cp <= 0x4FFFD:
+        return True
+    if cp >= 0x50000 and cp <= 0x5FFFD:
+        return True
+    if cp >= 0x60000 and cp <= 0x6FFFD:
+        return True
+    if cp >= 0x70000 and cp <= 0x7FFFD:
+        return True
+    if cp >= 0x80000 and cp <= 0x8FFFD:
+        return True
+    if cp >= 0x90000 and cp <= 0x9FFFD:
+        return True
+    if cp >= 0xA0000 and cp <= 0xAFFFD:
+        return True
+    if cp >= 0xB0000 and cp <= 0xBFFFD:
+        return True
+    if cp >= 0xC0000 and cp <= 0xCFFFD:
+        return True
+    if cp >= 0xD0000 and cp <= 0xDFFFD:
+        return True
+    return cp >= 0xE1000 and cp <= 0xEFFFD
 
 
 def _is_zone_id(input: String) -> Bool:
