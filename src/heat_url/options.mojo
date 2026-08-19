@@ -6,6 +6,7 @@ from heat_url.profile import ParseProfile
 @fieldwise_init
 struct ParseOptions(Copyable, Movable):
     var profile: ParseProfile
+    var base: Optional[String]
     var iri: Bool
     var allow_ipv6_zone_id: Bool
     var normalize_syntax: Bool
@@ -17,6 +18,7 @@ struct ParseOptions(Copyable, Movable):
     def rfc3986() -> Self:
         return ParseOptions(
             ParseProfile.rfc3986,
+            Optional[String](None),
             True,
             True,
             False,
@@ -29,6 +31,7 @@ struct ParseOptions(Copyable, Movable):
     def whatwg() -> Self:
         return ParseOptions(
             ParseProfile.whatwg,
+            Optional[String](None),
             True,
             True,
             False,

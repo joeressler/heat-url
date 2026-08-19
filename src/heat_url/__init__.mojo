@@ -16,6 +16,14 @@ from heat_url.limits import (
     DNS_MAX_LABEL_OCTETS,
 )
 from heat_url.options import ParseOptions
+from heat_url.percent import (
+    EncodeSet,
+    decode_lenient,
+    decode_strict,
+    decode_utf8_lenient,
+    decode_utf8_strict,
+    encode,
+)
 from heat_url.profile import ParseProfile
 
 comptime VERSION: StaticString = "0.1.0"
