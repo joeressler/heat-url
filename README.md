@@ -1,8 +1,8 @@
 # heat-url
 
-A Mojo library of standardized, robust URI/URL parsing utilities. It is specified to handle percent-encoding, query parameters, and internationalized domain names natively.
+A Mojo library of standardized, robust URI/URL parsing utilities. It handles percent-encoding, query parameters, and internationalized domain names natively.
 
-This repository is **specification-first**. The Pixi/Mojo project is initialized; library source is not present yet. Implement against the documents in [`specs/`](specs/), not against ad-hoc URL folklore.
+Implement against [`specs/`](specs/), following the agent phases in [`phases/`](phases/README.md).
 
 ## Status
 
@@ -10,25 +10,28 @@ This repository is **specification-first**. The Pixi/Mojo project is initialized
 | --- | --- |
 | Pixi workspace + Mojo 1.0 toolchain | Ready |
 | Specifications | Ready (`specs/`) |
-| Agent instructions | Ready (`AGENTS.md`) |
-| Library implementation | Not started (intentionally) |
+| Implementation phases | Ready (`phases/`) |
+| Bootstrap package (`ParseProfile`, errors, options) | Done (phase 00) |
+| Percent / query / IDNA / parsers | Not started (phases 01–09) |
 
 ## Specifications
 
-Start at [`specs/README.md`](specs/README.md). The library defines two parse profiles:
+Start at [`specs/README.md`](specs/README.md). Two parse profiles:
 
 - **RFC 3986 / RFC 3987** — strict URI/IRI for protocols, validators, and generic identifiers
 - **WHATWG URL Standard** — web-interoperable parsing, serialization, and form-urlencoded queries
 
-Internationalized domain names are first-class: Unicode IDNA Compatibility Processing ([UTS #46](https://www.unicode.org/reports/tr46/)) with Punycode ([RFC 3492](https://www.rfc-editor.org/rfc/rfc3492)), implemented in Mojo rather than delegated to Python or the OS.
+IDNA is first-class: UTS #46 + Punycode in Mojo (not Python or the OS).
 
-## Development environment
+## Development
 
 Requires [Pixi](https://pixi.sh/) and a C linker (`gcc` on Linux).
 
 ```bash
 pixi install
 pixi run mojo-version
+pixi run test
+pixi run fmt
 ```
 
-See [`AGENTS.md`](AGENTS.md) for project conventions, intended package layout, and how to implement from the specs.
+Agents: read [`AGENTS.md`](AGENTS.md), then take the next `todo` row in [`phases/STATUS.md`](phases/STATUS.md).

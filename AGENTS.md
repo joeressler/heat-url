@@ -13,97 +13,104 @@ Two parse profiles are mandatory and must never be mixed in one call:
 | `whatwg` | Web / HTTP user input / HTML forms | [WHATWG URL Standard](https://url.spec.whatwg.org/) |
 | `rfc3986` | Generic URI / IRI / protocol identifiers | [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986) + [RFC 3987](https://www.rfc-editor.org/rfc/rfc3987) |
 
-**Normative project documents:** [`specs/README.md`](specs/README.md) and the numbered files in `specs/`. Implement those documents. Do not invent URL behavior from `urllib`, Go `net/url`, or “common sense”.
+**Normative behavior:** [`specs/README.md`](specs/README.md).  
+**How to implement:** [`phases/README.md`](phases/README.md) and [`phases/STATUS.md`](phases/STATUS.md).
 
-## Current freeze
+Do not invent URL behavior from `urllib`, Go `net/url`, or “common sense”.
 
-This revision is **specification-only**. The Pixi project and Mojo toolchain are initialized. **Do not add `.mojo` sources, tests, or sample programs unless the user explicitly asks to implement the library.** Do not “helpfully” scaffold `src/heat_url` or a hello-world `main`.
+## Start here (implementation)
 
-When implementation is requested, follow `specs/` and the layout in `specs/00-overview.md`. Cite the spec section in public doc comments.
+1. Read this file and [`phases/README.md`](phases/README.md).
+2. Open [`phases/STATUS.md`](phases/STATUS.md). Implement the first phase with status `todo`.
+3. Read that phase file fully and every spec it lists.
+4. Change only what that phase allows. Keep `pixi run test` green.
+5. `pixi run fmt` on edited `.mojo` files.
+6. Mark the phase `done` in `STATUS.md`. Commit. Stop unless the user asked you to continue.
+
+Phase 00 (bootstrap) is **done**. Next is **phase 01** (percent-encoding).
+
+If the user names a phase, do that phase only after its dependencies are `done`. If they say “implement the library” with no phase, walk `todo` rows in order, one commit per phase.
 
 ## Toolchain
 
-- Package manager: **Pixi** (not Magic; Magic is unsupported).
+- Package manager: **Pixi** (not Magic).
 - Channel: **stable** Modular (`https://conda.modular.com/max`) + `conda-forge`.
-- Compiler: `mojo` from the `mojo` conda package (workspace uses Mojo 1.0.x).
-- Linker: a C toolchain (`gcc` on Linux) is required to compile Mojo.
+- Compiler: `mojo` 1.0.x. Linker: `gcc` (or equivalent) on Linux.
 
 ```bash
 pixi install
-pixi run mojo-version          # → mojo --version
-pixi run mojo --help
+pixi run mojo-version
+pixi run test
+pixi run fmt
 ```
 
-Never pin a mismatched MAX/Mojo pair. This repo is Mojo-only (`pixi add mojo`); do not add `max` unless the user asks.
+Never pin a mismatched MAX/Mojo pair. This repo is Mojo-only. Do not hand-edit `pixi.lock`.
 
-After changing `pixi.toml`, let Pixi refresh `pixi.lock`. Do not hand-edit the lockfile.
-
-## Intended layout (implementation phase)
+## Layout
 
 ```text
 pixi.toml
-pixi.lock
-src/heat_url/           # import path heat_url; __init__.mojo required
-test/                   # TestSuite files, plus test/data/ fixtures
-specs/                  # already present; keep in sync with code
+src/heat_url/           # import path heat_url
+test/test_*.mojo        # TestSuite files
+test/data/              # golden fixtures (phase 09)
+phases/                 # guided implementation plan
+specs/                  # normative behavior
+scripts/run-tests.sh
 AGENTS.md
 README.md
 ```
 
-Match Modular packaging: sources under `src/<package>/` with `__init__.mojo` so `mojo precompile` can emit `$PREFIX/lib/mojo/heat_url.mojoc` later.
+Run a single file: `pixi run mojo run -I src test/test_percent.mojo`.
 
-Run tests (once they exist):
-
-```bash
-pixi run mojo run -I src test/test_percent.mojo
-```
-
-Each test module needs `test_*` functions and:
+Each test module:
 
 ```mojo
-from std.testing import TestSuite
+from std.testing import assert_equal, TestSuite
+
+def test_example() raises:
+    assert_equal(1, 1)
 
 def main() raises:
     TestSuite.discover_tests[__functions_in_module()]().run()
 ```
 
-Do **not** use `mojo test` (removed). Assertions: `std.testing` (`assert_equal`, `assert_true`, `assert_raises`, …).
+Do **not** use `mojo test` (removed).
 
-## Mojo syntax (1.0) — avoid pretrained mistakes
+## Mojo syntax (1.0)
 
-Install/use Modular skills when writing Mojo: [`mojo-syntax`](https://github.com/modular/skills/tree/main/mojo-syntax) (`npx skills add modular/skills`). Highlights:
+Use Modular [`mojo-syntax`](https://github.com/modular/skills/tree/main/mojo-syntax) (`npx skills add modular/skills`). Highlights:
 
-- Imports: `from std.testing import …`, `import std.random` — not `from testing import`.
-- `raises` goes **before** `->`: `def parse(s: String) raises -> Url:`.
+- **No `fn`:** use `def` only.
+- Imports: `from std.testing import …` — not `from testing import`.
+- `raises` before `->`: `def parse(s: String) raises -> Url:`.
 - Compile-time: `comptime`, not `alias`.
-- Origins: `out` / `mut` / `var` / `ref` / `deinit`. Copy ctor is `__init__(out self, *, copy: Self)`; move is `__init__(out self, *, deinit move: Self)`.
-- Struct parameters: use `Self.T`, not bare `T`.
-- Non-`ImplicitlyCopyable` values: `.copy()` or `^` transfer — no implicit copy.
+- Origins: `out` / `mut` / `var` / `ref` / `deinit`.
+- Struct parameters: `Self.T`, not bare `T`.
+- Non-`ImplicitlyCopyable`: `.copy()` or `^`.
 - Lists: `[1, 2, 3]`, not `List[Int](1, 2, 3)`.
-- Strings: `s[byte=i]`, not `s[i]`; iterate `s.codepoint_slices()` / `s.codepoints()`.
+- Strings: `s[byte=i]` / `s[byte=start:end]`; `s.find`, `"x" in s`.
 - Interpolation: `t"x={x}"`.
-- Functions that fail: `raises`; `main` usually `raises`.
 
-## Implementation rules (when unfrozen)
+## Implementation rules
 
-1. **Read `specs/` first.** API names and error policy live in `specs/09-api.md` and `specs/08-error-handling.md`. Language rules live in the cited RFC/WHATWG for the active profile.
-2. **Native IDNA.** Punycode (RFC 3492) + UTS #46 tables in Mojo. No `from std.python import Python` in core parse/IDNA. A Python *generator* for Unicode tables is OK; runtime is not.
-3. **No profile guessing.** No `parse_magic`. `parse_url` → WHATWG; `parse_uri` → RFC 3986.
-4. **Robustness.** No panics on untrusted input. Enforce size limits. Linear-time parsers. Error messages must not include userinfo/passwords.
-5. **WHATWG validation errors ≠ failure.** Record them; only spec “Failure” rows abort. Optional `strict_whatwg` may promote them.
-6. **Do not use Python urllib as an oracle.** Use WPT `urltestdata.json`, RFC examples, Unicode IDNATestV2 (`specs/10-conformance.md`).
-7. **Keep specs true.** If code must diverge (Mojo limitation), update `specs/` in the same change and document the deviation. Do not silently diverge.
-8. **No extra product scope.** No HTTP client, DNS, HTML parser, URI templates, or PSL requirement in v1.
+1. **Specs first.** API and errors: `specs/09-api.md`, `specs/08-error-handling.md`. Language rules: RFC or WHATWG for the active profile.
+2. **Native IDNA.** Punycode + UTS #46 in Mojo. No `from std.python import Python` in `src/heat_url`. Generators may live under `tools/`.
+3. **No profile guessing.** `parse_url` → WHATWG; `parse_uri` → RFC 3986.
+4. **Robustness.** No panics on untrusted input. Enforce size limits. Linear-time parsers. Error text must not include userinfo/passwords (`redact_userinfo` already exists).
+5. **WHATWG validation errors ≠ failure** unless `strict_whatwg`.
+6. **No urllib oracle.** Use WPT, RFC examples, IDNATestV2 (`specs/10-conformance.md`).
+7. **Keep specs true.** Divergences update `specs/` in the same change.
+8. **No extra scope.** No HTTP client, DNS, HTML parser, URI templates, or required PSL.
 
-## Commands agents should prefer
+## Commands
 
 | Task | Command |
 | --- | --- |
 | Install env | `pixi install` |
 | Compiler version | `pixi run mojo-version` |
-| Run a file | `pixi run mojo run path/to/file.mojo` |
-| Build a binary | `pixi run mojo build path/to/file.mojo` |
-| Format (if available) | `pixi run mojo format` on edited `.mojo` files |
+| All tests | `pixi run test` |
+| Format | `pixi run fmt` |
+| Run one file | `pixi run mojo run -I src path/to/file.mojo` |
 
 ## Docs map
 
@@ -111,10 +118,11 @@ Install/use Modular skills when writing Mojo: [`mojo-syntax`](https://github.com
 | --- | --- |
 | [`README.md`](README.md) | Humans: what/why/status |
 | [`specs/`](specs/README.md) | Normative library behavior |
+| [`phases/`](phases/README.md) | Ordered implementation work |
 | [`AGENTS.md`](AGENTS.md) | Agents: how to work in this repo |
 | [`pixi.toml`](pixi.toml) | Dependencies and tasks |
 
-## Upstream references (pinned in specs)
+## Upstream references
 
 - WHATWG URL (living standard; re-read at implement time)
 - RFC 3986, 3987, 3492, 5890–5894, 6874, 5952
