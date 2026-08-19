@@ -16,7 +16,8 @@ Implement against [`specs/`](specs/), following the agent phases in [`phases/`](
 | Query parameters (`heat_url.query`) | Done (phase 02) |
 | Punycode (`heat_url.punycode`) | Done (phase 03) |
 | IDNA / UTS #46 (`heat_url.idna`, Unicode 17.0.0) | Done (phase 04) |
-| Hosts / URL parsers | Not started (phases 05–09) |
+| Hosts (`heat_url.host`) | Done (phase 05) |
+| URL / URI parsers | Not started (phases 06–09) |
 
 ## Specifications
 
