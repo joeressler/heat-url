@@ -93,7 +93,7 @@ struct QueryList:
 
 ```text
 def parse_host_whatwg(input: String, *, is_opaque: Bool) raises -> WhatwgHost
-def parse_host_rfc3986(input: String, *, allow_zone_id: Bool = True) raises -> RfcHost
+def parse_host_rfc3986(input: String, *, allow_zone_id: Bool = True, iri: Bool = False) raises -> RfcHost
 def serialize_host(host: WhatwgHost | RfcHost) -> String
 
 def to_ascii(domain: String, *, be_strict: Bool = False) raises -> String
@@ -101,6 +101,8 @@ def to_unicode(domain: String) raises -> String
 def punycode_encode(label: String) raises -> String
 def punycode_decode(label: String) raises -> String
 ```
+
+`iri=true` allows RFC 3987 `ireg-name` (Unicode `ucschar` in the host). Default `false` keeps RFC 3986 `reg-name` (ASCII / percent-encoded only).
 
 `to_ascii` / `to_unicode` **MUST** implement UTS #46 as used by WHATWG, not a homemade “strip accents” mapping.
 
