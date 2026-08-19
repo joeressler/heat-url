@@ -39,7 +39,7 @@ If the user names a phase, do that phase only after its dependencies are `done`.
 
 ```bash
 pixi install
-pixi run mojo-version
+pixi run mojo --version
 pixi run test
 pixi run fmt
 ```
@@ -107,7 +107,7 @@ Use Modular [`mojo-syntax`](https://github.com/modular/skills/tree/main/mojo-syn
 | Task | Command |
 | --- | --- |
 | Install env | `pixi install` |
-| Compiler version | `pixi run mojo-version` |
+| Compiler version | `pixi run mojo --version` |
 | All tests | `pixi run test` |
 | Format | `pixi run fmt` |
 | Run one file | `pixi run mojo run -I src path/to/file.mojo` |

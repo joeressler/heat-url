@@ -78,7 +78,7 @@ Vendored JSON/text fixtures **SHOULD** live under `test/data/` when implementati
 2. WPT `urltestdata.json` expected failures are listed in `test/data/WHATWG_SKIP.md` with reasons; unexplained failures are bugs.
 3. IDNATestV2: document ignored columns (e.g. transitional) — transitional **MUST** be false.
 4. No Python import in `src/heat_url`.
-5. `pixi run mojo-version` still works; `pixi run test` runs the suite.
+5. `pixi run mojo --version` still works; `pixi run test` runs the suite.
 
 ## Adding tests later
 
