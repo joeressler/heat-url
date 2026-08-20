@@ -1,6 +1,10 @@
 # heat-url specifications
 
-These documents are the **normative product specification** for `heat-url`. Future implementation must follow them. Where this tree and a referenced external standard disagree on library *shape* (API names, error types, profiles), this tree wins. Where they disagree on *URL/URI language rules*, the cited external standard for the active **parse profile** wins.
+These documents are the **normative product specification** for `heat-url`.
+Where this tree and a referenced external standard disagree on library *shape*
+(API names, error types, profiles), this tree wins. Where they disagree on
+*URL/URI language rules*, the cited external standard for the active **parse
+profile** wins.
 
 ## Reading order
 
@@ -18,8 +22,11 @@ These documents are the **normative product specification** for `heat-url`. Futu
 | 09 | [Public API](09-api.md) | Required modules, types, and operations |
 | 10 | [Conformance](10-conformance.md) | Test vectors, golden files, acceptance |
 
-Implementation order for agents is **not** this reading order. Follow [`phases/README.md`](../phases/README.md).
+The original implementation order is in [`phases/README.md`](../phases/README.md)
+(all phases complete). New work should match these specs, not replay the
+phases.
 
 ## Keywords
 
-The words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, **MAY**, and **OPTIONAL** are interpreted as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+The words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, **MAY**, and
+**OPTIONAL** are interpreted as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
