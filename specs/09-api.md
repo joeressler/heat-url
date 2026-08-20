@@ -34,12 +34,35 @@ struct ParseOptions:
 
 def parse_url(input: String, base: Optional[String] = None) raises -> Url
 def try_parse_url(input: String, base: Optional[String] = None) -> Optional[Url]
+def parse_url_detailed(input: String, base: Optional[String] = None) raises -> UrlParseResult
 
 def parse_uri(input: String, base: Optional[String] = None) raises -> Uri
 def try_parse_uri(input: String, base: Optional[String] = None) -> Optional[Uri]
 
 def parse(input: String, options: ParseOptions) raises -> Parsed
-# Parsed is a variant of Url | Uri matching options.profile
+```
+
+`parse_url` / `parse_uri` raise `ParseError` on failure. `try_parse_url` / `try_parse_uri` return an empty `Optional` and **MUST NOT** raise on parse failure.
+
+`parse_url` returns the WHATWG `Url` record only. Validation errors are **not** stored on `Url`. Callers that need the list use `parse_url_detailed`, which returns:
+
+```text
+struct UrlParseResult:
+    var url: Url
+    var validation_errors: List[ValidationError]
+```
+
+`try_parse_url` is success/failure only (no validation-error channel).
+
+`Parsed` is a variant of `Url` | `Uri` matching `options.profile` (no profile guessing):
+
+```text
+struct Parsed:
+    def is_url(self) -> Bool
+    def is_uri(self) -> Bool
+    def url(self) -> Optional[Url]
+    def uri(self) -> Optional[Uri]
+    def serialize(exclude_fragment: Bool = False) -> String
 ```
 
 `Url` / `Uri` **MUST** provide:
@@ -49,7 +72,7 @@ def parse(input: String, options: ParseOptions) raises -> Parsed
 - `query_list() -> QueryList` (parses form-urlencoded from the opaque query; empty list if query absent)
 - `origin()` optional helper (WHATWG)
 
-WHATWG setters, if implemented in v1, **MUST** follow URL Standard setter algorithms (`protocol`, `username`, `password`, `host`, `hostname`, `port`, `pathname`, `search`, `hash`). If deferred, document as v1.1; parse/serialize/query/IDNA remain mandatory for v1.
+WHATWG setters (`protocol`, `username`, `password`, `host`, `hostname`, `port`, `pathname`, `search`, `hash`) and `Url.origin()` are **deferred to v1.1**. Parse/serialize/query/IDNA remain mandatory for v1. If setters are added later, they **MUST** follow URL Standard setter algorithms.
 
 ## Percent module (`heat_url.percent`)
 

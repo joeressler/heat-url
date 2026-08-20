@@ -35,10 +35,19 @@ from heat_url.percent import (
     decode_utf8_strict,
     encode,
 )
+from heat_url.parse import (
+    Parsed,
+    parse,
+    parse_url,
+    parse_url_detailed,
+    parse_uri,
+    try_parse_uri,
+    try_parse_url,
+)
 from heat_url.profile import ParseProfile
 from heat_url.punycode import punycode_decode, punycode_encode
 from heat_url.query import QueryList
-from heat_url.rfc3986 import PathKind, Uri, parse_uri
+from heat_url.rfc3986 import PathKind, Uri
 from heat_url.whatwg import Url, UrlParseResult
 
 comptime VERSION: StaticString = "0.1.0"
