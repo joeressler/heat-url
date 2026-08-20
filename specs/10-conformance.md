@@ -1,6 +1,6 @@
 # 10 — Conformance
 
-A future implementation is **not** complete until the following pass. Phases 01–08 add unit tests; **phase 09** vendors golden files.
+v1 is **not** complete unless the following pass. Unit tests live under `test/test_*.mojo`. Golden files are vendored in `test/data/`.
 
 ## Tooling
 
@@ -20,7 +20,7 @@ A future implementation is **not** complete until the following pass. Phases 01�
 | RFC 3987 examples | `rfc3986` + IRI | Non-ASCII components |
 | RFC 3492 §7.1 samples | Punycode | `xn--` round-trip |
 
-Vendored JSON/text fixtures **SHOULD** live under `test/data/` when implementation starts, with source URL and revision recorded.
+Vendored JSON/text fixtures live under `test/data/`, with source URL and revision recorded.
 
 Phase 09 notes:
 
