@@ -39,5 +39,6 @@ from heat_url.profile import ParseProfile
 from heat_url.punycode import punycode_decode, punycode_encode
 from heat_url.query import QueryList
 from heat_url.rfc3986 import PathKind, Uri, parse_uri
+from heat_url.whatwg import Url, UrlParseResult
 
 comptime VERSION: StaticString = "0.1.0"

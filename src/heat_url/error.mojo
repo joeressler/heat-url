@@ -86,6 +86,22 @@ struct ParseError(Copyable, Movable, Writable):
         )
 
     @staticmethod
+    def too_many_path_segments(count: Int, max_segments: Int) -> Self:
+        var message = (
+            "path segment count "
+            + String(count)
+            + " exceeds max_path_segments "
+            + String(max_segments)
+        )
+        return ParseError(
+            ParseProfile.whatwg,
+            "too_many_path_segments",
+            message^,
+            Optional[Int](),
+            Optional[String](),
+        )
+
+    @staticmethod
     def host_failure(
         profile: ParseProfile,
         kind: String,
@@ -98,6 +114,18 @@ struct ParseError(Copyable, Movable, Writable):
             message.copy(),
             Optional[Int](),
             whatwg_name,
+        )
+
+    @staticmethod
+    def whatwg_failure(
+        kind: String, whatwg_name: String, message: String
+    ) -> Self:
+        return ParseError(
+            ParseProfile.whatwg,
+            kind.copy(),
+            message.copy(),
+            Optional[Int](),
+            Optional(whatwg_name.copy()),
         )
 
     @staticmethod
