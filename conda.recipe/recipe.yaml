@@ -8,7 +8,8 @@ package:
   version: ${{ version }}
 
 source:
-  - path: ..
+  - git: https://github.com/joeressler/heat-url.git
+    rev: fb44a8b0ccfc611a46935cc9d9e6f1cda1f4a05b
 
 build:
   number: 0
