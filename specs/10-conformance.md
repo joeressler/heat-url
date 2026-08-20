@@ -24,7 +24,7 @@ Vendored JSON/text fixtures **SHOULD** live under `test/data/` when implementati
 
 Phase 09 notes:
 
-- `urltestdata.json` is parsed with [ehsanmok/json](https://github.com/ehsanmok/json) v0.3.0 (`from json.cpu import parse_cpu_native_tape`; CPU target only).
+- `urltestdata.json` is parsed with [EmberJson](https://github.com/bgreni/EmberJson) 0.3.4 (`from emberjson import parse`; tests only, not `src/heat_url`).
 - WPT **`origin` is not asserted** (WHATWG `origin()` deferred to v1.1). Setters and `urltestdata-javascript-only.json` are not run.
 - Empty query/fragment still serialize as `?`/`#` on `href`; the URL **search**/**hash** getters treat null *or empty* as `""` (URL Standard).
 - `percent-encoding.json`: utf-8 rows only (`EncodeSet.SpecialQuery`). Other encodings are out of scope (no encoding argument).

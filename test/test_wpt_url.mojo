@@ -1,3 +1,4 @@
+from emberjson import parse, Value
 from heat_url import (
     EncodeSet,
     Url,
@@ -5,8 +6,6 @@ from heat_url import (
     parse_url,
     serialize_host,
 )
-from json.cpu import parse_cpu_native_tape
-from json.value import Value
 from std.testing import assert_equal, assert_true, TestSuite
 
 
@@ -25,26 +24,20 @@ def _read_file(path: String) raises -> String:
 
 
 def _load_json(path: String) raises -> Value:
-    return parse_cpu_native_tape(_read_file(path))
+    return parse(_read_file(path))
 
 
-def _has(obj: Value, key: String) -> Bool:
-    var keys = obj.object_keys()
-    var i = 0
-    while i < len(keys):
-        if keys[i] == key:
-            return True
-        i += 1
-    return False
+def _has(ref obj: Value, key: String) -> Bool:
+    return key in obj.object()
 
 
-def _opt_base(obj: Value) raises -> Optional[String]:
+def _opt_base(ref obj: Value) raises -> Optional[String]:
     if not _has(obj, "base"):
         return Optional[String](None)
-    var b = obj["base"]
+    ref b = obj["base"]
     if b.is_null():
         return Optional[String](None)
-    return Optional(b.string_value())
+    return Optional(String(b.string()))
 
 
 def _bases_equal(a: Optional[String], b: Optional[String]) -> Bool:
@@ -63,12 +56,12 @@ def _load_skips() raises -> List[_Skip]:
     while i < len(lines):
         var line = _trim(lines[i])
         if line.byte_length() > 0 and Int(line.as_bytes()[0]) == 0x7B:
-            var obj = parse_cpu_native_tape(line)
+            var obj = parse(line)
             out.append(
                 _Skip(
-                    obj["input"].string_value(),
+                    String(obj["input"].string()),
                     _opt_base(obj),
-                    obj["reason"].string_value(),
+                    String(obj["reason"].string()),
                 )
             )
         i += 1
@@ -196,10 +189,10 @@ def test_wpt_urltestdata() raises:
     var failures = List[String]()
     var ran = 0
     var skipped = 0
-    var n = root.array_count()
+    var n = len(root)
     var i = 0
     while i < n:
-        var item = root[i]
+        ref item = root[i]
         i += 1
         if item.is_string():
             continue
@@ -207,14 +200,14 @@ def test_wpt_urltestdata() raises:
             continue
         if not _has(item, "input"):
             continue
-        var input = item["input"].string_value()
+        var input = String(item["input"].string())
         var base = _opt_base(item)
         if _is_skipped(skips, input, base):
             skipped += 1
             continue
         ran += 1
         var label = _case_label(input, base)
-        var expect_fail = _has(item, "failure") and item["failure"].bool_value()
+        var expect_fail = _has(item, "failure") and item["failure"].bool()
         var parsed = Optional[Url](None)
         var did_fail = False
         try:
@@ -234,66 +227,66 @@ def test_wpt_urltestdata() raises:
             label,
             "href",
             url.serialize(),
-            item["href"].string_value(),
+            String(item["href"].string()),
         )
         _mismatch(
             failures,
             label,
             "protocol",
             url.scheme + ":",
-            item["protocol"].string_value(),
+            String(item["protocol"].string()),
         )
         _mismatch(
             failures,
             label,
             "username",
             url.username,
-            item["username"].string_value(),
+            String(item["username"].string()),
         )
         _mismatch(
             failures,
             label,
             "password",
             url.password,
-            item["password"].string_value(),
+            String(item["password"].string()),
         )
         _mismatch(
             failures,
             label,
             "host",
             _host_text(url),
-            item["host"].string_value(),
+            String(item["host"].string()),
         )
         _mismatch(
             failures,
             label,
             "hostname",
             _hostname(url),
-            item["hostname"].string_value(),
+            String(item["hostname"].string()),
         )
         _mismatch(
             failures,
             label,
             "port",
             _port_text(url),
-            item["port"].string_value(),
+            String(item["port"].string()),
         )
         _mismatch(
             failures,
             label,
             "pathname",
             _pathname(url),
-            item["pathname"].string_value(),
+            String(item["pathname"].string()),
         )
         _mismatch(
             failures,
             label,
             "search",
             _search(url),
-            item["search"].string_value(),
+            String(item["search"].string()),
         )
         _mismatch(
-            failures, label, "hash", _hash(url), item["hash"].string_value()
+            failures, label, "hash", _hash(url), String(item["hash"].string())
         )
 
     var msg = (
@@ -318,18 +311,18 @@ def test_wpt_urltestdata() raises:
 def test_wpt_percent_encoding_utf8() raises:
     var root = _load_json("test/data/percent-encoding.json")
     assert_true(root.is_array())
-    var n = root.array_count()
+    var n = len(root)
     var i = 0
     while i < n:
-        var item = root[i]
+        ref item = root[i]
         i += 1
         if not item.is_object():
             continue
-        var input = item["input"].string_value()
-        var out = item["output"]
+        var input = String(item["input"].string())
+        ref out = item["output"]
         if not _has(out, "utf-8"):
             continue
-        var expected = out["utf-8"].string_value()
+        var expected = String(out["utf-8"].string())
         var got = encode(input, EncodeSet.SpecialQuery)
         assert_equal(got, expected)
 
