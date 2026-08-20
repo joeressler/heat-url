@@ -14,7 +14,7 @@ fi
 failed=0
 for f in "${files[@]}"; do
   echo "==> ${f}"
-  if ! mojo run -I src "${f}"; then
+  if ! mojo run -I src -I third_party/json "${f}"; then
     failed=1
   fi
 done

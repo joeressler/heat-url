@@ -60,7 +60,7 @@ AGENTS.md
 README.md
 ```
 
-Run a single file: `pixi run mojo run -I src test/test_percent.mojo`.
+Run a single file: `pixi run mojo run -I src test/test_percent.mojo`. WPT JSON tests also need `-I third_party/json`.
 
 Each test module:
 
@@ -110,7 +110,7 @@ Use Modular [`mojo-syntax`](https://github.com/modular/skills/tree/main/mojo-syn
 | Compiler version | `pixi run mojo --version` |
 | All tests | `pixi run test` |
 | Format | `pixi run fmt` |
-| Run one file | `pixi run mojo run -I src path/to/file.mojo` |
+| Run one file | `pixi run mojo run -I src path/to/file.mojo` (add `-I third_party/json` for WPT JSON tests) |
 
 ## Docs map
 

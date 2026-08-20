@@ -12,3 +12,6 @@ fmt = "mojo format src test"
 
 [dependencies]
 mojo = ">=1.0.0,<2"
+
+# WPT JSON is parsed by vendored ehsanmok/json v0.3.0 (third_party/json),
+# CPU parser only. The published git package pulls MAX + simdjson + GPU.
