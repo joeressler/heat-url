@@ -13,7 +13,7 @@ Refresh with `bash tools/fetch_fixtures.sh` (network). Committed copies are auth
 | `IDNATestV2.txt` | [Unicode 17.0.0 IdnaTestV2](https://www.unicode.org/Public/17.0.0/idna/IdnaTestV2.txt) | Unicode 17.0.0 (file date 2025-05-01) | [Unicode Terms of Use](https://www.unicode.org/terms_of_use.html) |
 | `WHATWG_SKIP.md` | this repo | — | same as heat-url |
 
-JSON fixtures are parsed with vendored [ehsanmok/json v0.3.0](https://github.com/ehsanmok/json) (`from json.cpu import parse_cpu_native_tape`).
+JSON fixtures are parsed with [EmberJson](https://github.com/bgreni/EmberJson) 0.3.4 (`from emberjson import parse`; pixi package, tests only).
 
 ## Not vendored
 
