@@ -13,4 +13,4 @@ Update the **Status** column when a phase is finished (`todo` → `done`). Do no
 | 06 | [RFC 3986 URI](06-rfc3986.md) | done | URI-reference parse/serialize/§5 resolve; IRI via `ParseOptions.iri` |
 | 07 | [WHATWG URL](07-whatwg.md) | done | `heat_url.whatwg` basic URL parser/serializer + validation errors; origin/setters deferred |
 | 08 | [Public API](08-public-api.md) | done | `parse_url` / `try_parse_url` / `parse_url_detailed` / `parse`; setters and `origin()` deferred to v1.1 |
-| 09 | [Conformance fixtures](09-conformance.md) | todo | |
+| 09 | [Conformance fixtures](09-conformance.md) | done | WPT urltestdata via EmberJson 0.3.4 + Unicode 17.0.0 IDNATestV2; setters/origin/JS-only WPT and transitional IDNA not run |

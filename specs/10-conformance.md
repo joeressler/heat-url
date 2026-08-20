@@ -22,6 +22,14 @@ A future implementation is **not** complete until the following pass. Phases 01â
 
 Vendored JSON/text fixtures **SHOULD** live under `test/data/` when implementation starts, with source URL and revision recorded.
 
+Phase 09 notes:
+
+- `urltestdata.json` is parsed with [EmberJson](https://github.com/bgreni/EmberJson) 0.3.4 (`from emberjson import parse`; tests only, not `src/heat_url`).
+- WPT **`origin` is not asserted** (WHATWG `origin()` deferred to v1.1). Setters and `urltestdata-javascript-only.json` are not run.
+- Empty query/fragment still serialize as `?`/`#` on `href`; the URL **search**/**hash** getters treat null *or empty* as `""` (URL Standard).
+- `percent-encoding.json`: utf-8 rows only (`EncodeSet.SpecialQuery`). Other encodings are out of scope (no encoding argument).
+- IDNATestV2 columns 6â€“7 (transitional ToASCII) are ignored. Transitional processing stays false. WHATWG `to_unicode` ignores UTS #46 codes for flags it does not set (`U1`, `V2`, `V3`, `A4_1`, `A4_2`, `X4_2`).
+
 ## Required unit clusters
 
 ### Percent-encoding

@@ -11,6 +11,7 @@ environments:
     channels:
     - url: https://conda.modular.com/max/
     - url: https://conda.anaconda.org/conda-forge/
+    - url: https://repo.prefix.dev/modular-community/
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
@@ -63,6 +64,7 @@ environments:
       - conda: https://conda.modular.com/max/linux-64/mojo-compiler-1.0.0-release.conda
       - conda: https://conda.modular.com/max/noarch/mblack-26.5.0-release.conda
       - conda: https://conda.modular.com/max/noarch/mojo-python-1.0.0-release.conda
+      - conda: https://repo.prefix.dev/modular-community/linux-64/emberjson-0.3.4-hb0f4dca_0.conda
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -716,3 +718,12 @@ packages:
   run_exports: {}
   size: 24040
   timestamp: 1785891558838
+- conda: https://repo.prefix.dev/modular-community/linux-64/emberjson-0.3.4-hb0f4dca_0.conda
+  sha256: 391e491f8022e0e9384a237469ab870cff89c074bc4bb8be58f4078ccdf49395
+  md5: ab1167ee3d994a242e1f4dfb32e7529d
+  depends:
+  - mojo-compiler >=1.0.0,<2.0a0
+  license: Apache-2.0
+  run_exports: {}
+  size: 10338142
+  timestamp: 1787047091207

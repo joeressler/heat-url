@@ -24,7 +24,7 @@ test/test_idna_unidata.mojo
 tools/fetch_fixtures.sh          # optional; record exact URLs
 ```
 
-Mojo JSON: use the stdlib JSON APIs if available; otherwise a **minimal** fixture subset in Mojo tables plus a note that full JSON is consumed by a `tools/` checker. Prefer real JSON in-tree if `std` can parse it. If JSON parse is impractical, convert fixtures to `.mojo` tables with a generator under `tools/` (Python allowed **only** in `tools/`).
+Mojo JSON: tests parse WPT JSON with [EmberJson](https://github.com/bgreni/EmberJson) (`from emberjson import parse`). Do not import EmberJson from `src/heat_url`. Do not write a homemade JSON parser.
 
 ## Implement
 
