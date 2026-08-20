@@ -1,4 +1,4 @@
-# heat_url: standardized URI/URL parsing. Implement against specs/; see phases/.
+# heat_url: URI/URL parsing (WHATWG and RFC 3986). Specs in specs/.
 from heat_url.error import (
     IdnaError,
     ParseError,
@@ -50,4 +50,4 @@ from heat_url.query import QueryList
 from heat_url.rfc3986 import PathKind, Uri
 from heat_url.whatwg import Url, UrlParseResult
 
-comptime VERSION: StaticString = "0.1.0"
+comptime VERSION: StaticString = "1.0.0"

@@ -2,7 +2,7 @@
 
 ## Product
 
-`heat-url` is a **pure Mojo library** for parsing, serializing, normalizing, and mutating Uniform Resource Identifiers and URLs. Callers get:
+`heat-url` is a **pure Mojo library** for parsing, serializing, and normalizing Uniform Resource Identifiers and URLs. Callers get:
 
 1. Standards-accurate component access (scheme, userinfo, host, port, path, query, fragment).
 2. Percent-encoding and percent-decoding with explicit encode sets.
@@ -54,22 +54,24 @@ There is **no** implicit “best effort” profile that tries WHATWG after RFC f
 
 ## Package layout
 
-Follow Modular’s library layout so `mojo precompile` / pixi-build-mojo can discover the package:
+Follow Modular’s library layout so `mojo precompile` can discover the package:
 
 ```text
 src/heat_url/__init__.mojo
-src/heat_url/percent.mojo      # phase 01
-src/heat_url/query.mojo        # phase 02
-src/heat_url/punycode.mojo     # phase 03
-src/heat_url/idna.mojo         # phase 04
-src/heat_url/host.mojo         # phase 05
-src/heat_url/rfc3986.mojo      # phase 06
-src/heat_url/whatwg.mojo       # phase 07
+src/heat_url/parse.mojo
+src/heat_url/percent.mojo
+src/heat_url/query.mojo
+src/heat_url/punycode.mojo
+src/heat_url/idna.mojo
+src/heat_url/host.mojo
+src/heat_url/rfc3986.mojo
+src/heat_url/whatwg.mojo
 test/test_*.mojo
+conda.recipe/recipe.yaml
 ```
 
-Bootstrap (phase 00) already added `profile`, `limits`, `options`, and `error`. Tests use `std.testing.TestSuite` (`mojo test` was removed). Agents implement remaining files per [`phases/`](../phases/README.md).
+`profile`, `limits`, `options`, and `error` live alongside those modules. Tests use `std.testing.TestSuite` (`mojo test` was removed). The conda recipe writes `lib/mojo/heat_url.mojoc`.
 
 ## Versioning
 
-The library is `0.1.0` until the first implementation that passes the conformance suite in [10-conformance.md](10-conformance.md). After that, parse-profile behavior is semver-stable: silent changes to WHATWG or RFC interpretation require a major version **or** an explicit profile revision flag.
+The library is `1.0.0`. Parse-profile behavior is semver-stable: silent changes to WHATWG or RFC interpretation require a major version **or** an explicit profile revision flag. WHATWG setters and `origin()` are deferred to 1.1.

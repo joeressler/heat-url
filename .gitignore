@@ -2,7 +2,7 @@
 .pixi/*
 !.pixi/config.toml
 
-# Mojo build artifacts (when library code is added)
+# Mojo build artifacts
 *.mojopkg
 *.mojoc
 /output/

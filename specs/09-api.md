@@ -1,6 +1,6 @@
 # 09 — Public API
 
-This is the **required** v1 surface. Names use Mojo style. Until implementation exists, this document is the contract.
+This is the **required** v1 surface. Names use Mojo style. The implementation in `src/heat_url` is this contract.
 
 ## Package
 

@@ -11,7 +11,7 @@ Refresh with `bash tools/fetch_fixtures.sh` (network). Committed copies are auth
 | `urltestdata.json` | [WPT `url/resources/urltestdata.json`](https://github.com/web-platform-tests/wpt/blob/181476aa16e8b28a07698bef3a0275fa53dd22e5/url/resources/urltestdata.json) | git `181476aa16e8b28a07698bef3a0275fa53dd22e5` (2026-08-20) | [WPT 3-clause BSD](https://github.com/web-platform-tests/wpt/blob/master/LICENSE.md) |
 | `percent-encoding.json` | [WPT `url/resources/percent-encoding.json`](https://github.com/web-platform-tests/wpt/blob/181476aa16e8b28a07698bef3a0275fa53dd22e5/url/resources/percent-encoding.json) | same SHA | same |
 | `IDNATestV2.txt` | [Unicode 17.0.0 IdnaTestV2](https://www.unicode.org/Public/17.0.0/idna/IdnaTestV2.txt) | Unicode 17.0.0 (file date 2025-05-01) | [Unicode Terms of Use](https://www.unicode.org/terms_of_use.html) |
-| `WHATWG_SKIP.md` | this repo | — | same as heat-url |
+| `WHATWG_SKIP.md` | this repo | | Apache-2.0 (heat-url) |
 
 JSON fixtures are parsed with [EmberJson](https://github.com/bgreni/EmberJson) 0.3.4 (`from emberjson import parse`; pixi package, tests only).
 

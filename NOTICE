@@ -1,0 +1,12 @@
+heat-url
+Copyright 2026 Joseph Ressler
+
+This product includes Unicode data from Unicode, Inc. See the Unicode
+Terms of Use: https://www.unicode.org/terms_of_use.html
+
+Test fixtures under test/data/ include:
+
+- Web Platform Tests URL resources (3-clause BSD)
+  https://github.com/web-platform-tests/wpt
+- Unicode IDNATestV2 (Unicode Terms of Use)
+  https://www.unicode.org/Public/idna/

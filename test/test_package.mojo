@@ -19,7 +19,7 @@ from std.testing import (
 
 
 def test_package_version() raises:
-    assert_equal(String(VERSION), "0.1.0")
+    assert_equal(String(VERSION), "1.0.0")
 
 
 def test_parse_profiles_are_distinct() raises:
