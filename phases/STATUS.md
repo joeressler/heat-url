@@ -11,6 +11,6 @@ Update the **Status** column when a phase is finished (`todo` → `done`). Do no
 | 04 | [IDNA / UTS #46](04-idna.md) | done | Unicode 17.0.0 tables; `to_ascii` / `to_unicode` non-transitional |
 | 05 | [Hosts](05-hosts.md) | done | WHATWG host parser + RFC 3986 IP-literal / IPv4 / reg-name |
 | 06 | [RFC 3986 URI](06-rfc3986.md) | done | URI-reference parse/serialize/§5 resolve; IRI via `ParseOptions.iri` |
-| 07 | [WHATWG URL](07-whatwg.md) | todo | |
+| 07 | [WHATWG URL](07-whatwg.md) | done | `heat_url.whatwg` basic URL parser/serializer + validation errors; origin/setters deferred |
 | 08 | [Public API](08-public-api.md) | todo | |
 | 09 | [Conformance fixtures](09-conformance.md) | todo | |

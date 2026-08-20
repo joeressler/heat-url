@@ -1,4 +1,4 @@
-from heat_url.error import ParseError
+from heat_url.error import ParseError, ValidationError
 from heat_url.idna import to_ascii
 from heat_url.limits import (
     DEFAULT_MAX_AUTHORITY_LENGTH,
@@ -280,6 +280,14 @@ struct RfcHost(Copyable, Equatable, Movable, Writable):
 def parse_host_whatwg(
     input: String, *, is_opaque: Bool = False
 ) raises ParseError -> WhatwgHost:
+    var errors = List[ValidationError]()
+    return parse_host_whatwg_with_errors(input, errors, is_opaque=is_opaque)
+
+
+# Same as parse_host_whatwg, appending non-fatal WHATWG §1.1 host validation errors.
+def parse_host_whatwg_with_errors(
+    input: String, mut errors: List[ValidationError], *, is_opaque: Bool = False
+) raises ParseError -> WhatwgHost:
     _check_host_length(input, ParseProfile.whatwg)
     if input.byte_length() == 0:
         return WhatwgHost.empty()
@@ -290,13 +298,17 @@ def parse_host_whatwg(
             )
         var n = input.byte_length()
         var inner = String(input[byte = 1 : n - 1])
-        return WhatwgHost.ipv6(_parse_whatwg_ipv6(inner^))
+        return WhatwgHost.ipv6(_parse_whatwg_ipv6(inner^, errors))
     if is_opaque:
-        return _parse_opaque_host(input)
+        return _parse_opaque_host(input, errors)
+    if _contains_percent_encoded_byte(input):
+        _record(errors, "domain-percent-encoded")
     var domain = decode_utf8_lenient(input)
-    var ascii_domain = _domain_parser(domain^)
+    var ascii_domain = _domain_parser(domain.copy(), errors)
     if _ends_in_a_number(ascii_domain.copy()):
-        return WhatwgHost.ipv4(_parse_whatwg_ipv4(ascii_domain^))
+        if not _is_ascii(domain):
+            _record(errors, "IPv4-non-ASCII-input")
+        return WhatwgHost.ipv4(_parse_whatwg_ipv4(ascii_domain^, errors))
     return WhatwgHost.domain(ascii_domain^)
 
 
@@ -361,11 +373,16 @@ def _rfc_fail(kind: String, message: String) -> ParseError:
 
 
 # WHATWG §3.3 domain parser with beStrict=false (ASCII lowercase fallback).
-def _domain_parser(domain: String) raises ParseError -> String:
+def _domain_parser(
+    domain: String, mut errors: List[ValidationError]
+) raises ParseError -> String:
+    var strict_failed = False
     try:
         _ = to_ascii(domain.copy(), be_strict=True)
     except _:
-        pass
+        strict_failed = True
+    if strict_failed:
+        _record(errors, "domain-to-ASCII")
 
     var result: String
     if _is_ascii(domain):
@@ -391,13 +408,17 @@ def _domain_parser(domain: String) raises ParseError -> String:
     return result^
 
 
-def _parse_opaque_host(input: String) raises ParseError -> WhatwgHost:
+def _parse_opaque_host(
+    input: String, mut errors: List[ValidationError]
+) raises ParseError -> WhatwgHost:
     if _contains_forbidden_host(input):
         raise _whatwg_fail(
             "host_invalid_code_point",
             "host-invalid-code-point",
             "opaque host contains a forbidden host code point",
         )
+    if _opaque_has_invalid_url_unit(input):
+        _record(errors, "invalid-URL-unit")
     var encoded = encode(input, EncodeSet.C0Control)
     if encoded.byte_length() == 0:
         return WhatwgHost.empty()
@@ -420,11 +441,16 @@ def _ends_in_a_number(input: String) raises ParseError -> Bool:
 
 
 # WHATWG §3.5 IPv4 parser. Returns a 32-bit address or failure.
-def _parse_whatwg_ipv4(input: String) raises ParseError -> UInt32:
+def _parse_whatwg_ipv4(
+    input: String, mut errors: List[ValidationError]
+) raises ParseError -> UInt32:
     var parts = _split_byte(input, 0x2E)
     if len(parts) > 0 and parts[len(parts) - 1].byte_length() == 0:
+        _record(errors, "IPv4-empty-part")
         if len(parts) > 1:
             _ = parts.pop()
+    if len(parts) < 4:
+        _record(errors, "IPv4-too-few-parts")
     if len(parts) > 4:
         raise _whatwg_fail(
             "ipv4_too_many_parts",
@@ -441,6 +467,8 @@ def _parse_whatwg_ipv4(input: String) raises ParseError -> UInt32:
                 "IPv4-non-numeric-part",
                 "IPv4 part is not a number",
             )
+        if parsed.non_decimal:
+            _record(errors, "IPv4-non-decimal-part")
         numbers.append(parsed.value)
         i += 1
     if len(numbers) == 0:
@@ -449,15 +477,23 @@ def _parse_whatwg_ipv4(input: String) raises ParseError -> UInt32:
             "IPv4-non-numeric-part",
             "IPv4 address has no parts",
         )
+    var any_out = False
     var j = 0
-    while j < len(numbers) - 1:
+    while j < len(numbers):
         if numbers[j] > 255:
+            any_out = True
+        j += 1
+    if any_out:
+        _record(errors, "IPv4-out-of-range-part")
+    var k = 0
+    while k < len(numbers) - 1:
+        if numbers[k] > 255:
             raise _whatwg_fail(
                 "ipv4_out_of_range_part",
                 "IPv4-out-of-range-part",
                 "IPv4 part is out of range",
             )
-        j += 1
+        k += 1
     var limit = _pow256(5 - len(numbers))
     if numbers[len(numbers) - 1] >= limit:
         raise _whatwg_fail(
@@ -468,11 +504,11 @@ def _parse_whatwg_ipv4(input: String) raises ParseError -> UInt32:
     var ipv4 = numbers[len(numbers) - 1]
     _ = numbers.pop()
     var counter = 0
-    var k = 0
-    while k < len(numbers):
-        ipv4 += numbers[k] * _pow256(3 - counter)
+    var m = 0
+    while m < len(numbers):
+        ipv4 += numbers[m] * _pow256(3 - counter)
         counter += 1
-        k += 1
+        m += 1
     return UInt32(ipv4)
 
 
@@ -523,7 +559,9 @@ def _parse_ipv4_number(input: String) -> _Ipv4Number:
 
 
 # WHATWG §3.5 IPv6 parser (pointer algorithm; no zone IDs).
-def _parse_whatwg_ipv6(input: String) raises ParseError -> Ipv6Pieces:
+def _parse_whatwg_ipv6(
+    input: String, mut errors: List[ValidationError]
+) raises ParseError -> Ipv6Pieces:
     var cps = _codepoints(input)
     var address = List[Int](capacity=8)
     var a = 0
@@ -648,6 +686,15 @@ def _parse_whatwg_ipv6(input: String) raises ParseError -> Ipv6Pieces:
                 "IPv6-invalid-code-point",
                 "IPv6 address has an invalid code point",
             )
+
+        if length > 1:
+            var threshold = 1
+            var t = 1
+            while t < length:
+                threshold *= 16
+                t += 1
+            if value < threshold:
+                _record(errors, "IPv6-piece-leading-zero")
 
         address[piece_index] = value
         piece_index += 1
@@ -1230,3 +1277,88 @@ def _contains_forbidden_domain(s: String) -> Bool:
         if _forbidden_domain_cp(Int(cp)):
             return True
     return False
+
+
+def _record(mut errors: List[ValidationError], name: String):
+    errors.append(ValidationError(name.copy(), Optional[Int]()))
+
+
+def _contains_percent_encoded_byte(s: String) -> Bool:
+    var src = s.as_bytes()
+    var n = len(src)
+    var i = 0
+    while i + 2 < n:
+        if (
+            src[i] == 0x25
+            and _is_ascii_hex(Int(src[i + 1]))
+            and _is_ascii_hex(Int(src[i + 2]))
+        ):
+            return True
+        i += 1
+    return False
+
+
+def _opaque_has_invalid_url_unit(s: String) -> Bool:
+    var cps = _codepoints(s)
+    var n = len(cps)
+    var i = 0
+    while i < n:
+        var cp = cps[i]
+        if cp != 0x25 and not _is_url_code_point(cp):
+            return True
+        if cp == 0x25:
+            if (
+                i + 2 >= n
+                or not _is_ascii_hex(cps[i + 1])
+                or not _is_ascii_hex(cps[i + 2])
+            ):
+                return True
+        i += 1
+    return False
+
+
+def _is_url_code_point(cp: Int) -> Bool:
+    if _is_ascii_alphanumeric_cp(cp):
+        return True
+    if (
+        cp == 0x21
+        or cp == 0x24
+        or cp == 0x26
+        or cp == 0x27
+        or cp == 0x28
+        or cp == 0x29
+        or cp == 0x2A
+        or cp == 0x2B
+        or cp == 0x2C
+        or cp == 0x2D
+        or cp == 0x2E
+        or cp == 0x2F
+        or cp == 0x3A
+        or cp == 0x3B
+        or cp == 0x3D
+        or cp == 0x3F
+        or cp == 0x40
+        or cp == 0x5F
+        or cp == 0x7E
+    ):
+        return True
+    if cp < 0xA0 or cp > 0x10FFFD:
+        return False
+    if cp >= 0xD800 and cp <= 0xDFFF:
+        return False
+    return not _is_noncharacter(cp)
+
+
+def _is_ascii_alphanumeric_cp(cp: Int) -> Bool:
+    if cp >= 0x30 and cp <= 0x39:
+        return True
+    if cp >= 0x41 and cp <= 0x5A:
+        return True
+    return cp >= 0x61 and cp <= 0x7A
+
+
+def _is_noncharacter(cp: Int) -> Bool:
+    if cp >= 0xFDD0 and cp <= 0xFDEF:
+        return True
+    var low = cp & 0xFFFF
+    return low == 0xFFFE or low == 0xFFFF
