@@ -73,6 +73,21 @@ return an empty `Optional` instead. WHATWG validation errors (for example
 Error text is stripped of userinfo so a password in the input does not show up
 in the message.
 
+## More examples
+
+WHATWG (`parse_url`): resolve page-relative links and compare canonical URLs.
+
+```bash
+pixi run example-resolve    # examples/resolve_href.mojo
+pixi run example-canonical  # examples/canonical.mojo
+```
+
+RFC 3986 (`parse_uri`): URN, §5 relative resolution, IRI/IDNA host options.
+
+```bash
+pixi run example-rfc        # examples/rfc_protocol.mojo
+```
+
 ## What 1.0 covers
 
 | Area | Entry points |
